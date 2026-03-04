@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🇬🇧 Irregular Verbs Trainer</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', sans-serif; }
+  input::placeholder { color: #6b7280; }
+  button:hover { opacity: 0.88; transform: scale(1.03); transition: all 0.15s; }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const verbs = [
+  {base:"be",past:"was/were",participle:"been",german:"sein"},
+  {base:"become",past:"became",participle:"become",german:"werden"},
+  {base:"begin",past:"began",participle:"begun",german:"beginnen"},
+  {base:"break",past:"broke",participle:"broken",german:"brechen"},
+  {base:"bring",past:"brought",participle:"brought",german:"bringen"},
+  {base:"build",past:"built",participle:"built",german:"bauen"},
+  {base:"buy",past:"bought",participle:"bought",german:"kaufen"},
+  {base:"catch",past:"caught",participle:"caught",german:"fangen"},
+  {base:"choose",past:"chose",participle:"chosen",german:"wählen"},
+  {base:"come",past:"came",participle:"come",german:"kommen"},
+  {base:"cut",past:"cut",participle:"cut",german:"schneiden"},
+  {base:"do",past:"did",participle:"done",german:"tun/machen"},
+  {base:"draw",past:"drew",participle:"drawn",german:"zeichnen"},
+  {base:"dream",past:"dreamt",participle:"dreamt",german:"träumen"},
+  {base:"drink",past:"drank",participle:"drunk",german:"trinken"},
+  {base:"drive",past:"drove",participle:"driven",german:"fahren"},
+  {base:"eat",past:"ate",participle:"eaten",german:"essen"},
+  {base:"fall",past:"fell",participle:"fallen",german:"fallen"},
+  {base:"feel",past:"felt",participle:"felt",german:"fühlen"},
+  {base:"fight",past:"fought",participle:"fought",german:"kämpfen"},
+  {base:"find",past:"found",participle:"found",german:"finden"},
+  {base:"fly",past:"flew",participle:"flown",german:"fliegen"},
+  {base:"forget",past:"forgot",participle:"forgotten",german:"vergessen"},
+  {base:"get",past:"got",participle:"got/gotten",german:"bekommen"},
+  {base:"give",past:"gave",participle:"given",german:"geben"},
+  {base:"go",past:"went",participle:"gone",german:"gehen"},
+  {base:"grow",past:"grew",participle:"grown",german:"wachsen"},
+  {base:"have",past:"had",participle:"had",german:"haben"},
+  {base:"hear",past:"heard",participle:"heard",german:"hören"},
+  {base:"hide",past:"hid",participle:"hidden",german:"verstecken"},
+  {base:"hit",past:"hit",participle:"hit",german:"treffen/schlagen"},
+  {base:"hold",past:"held",participle:"held",german:"halten"},
+  {base:"hurt",past:"hurt",participle:"hurt",german:"verletzen"},
+  {base:"keep",past:"kept",participle:"kept",german:"behalten"},
+  {base:"know",past:"knew",participle:"known",german:"wissen/kennen"},
+  {base:"leave",past:"left",participle:"left",german:"verlassen"},
+  {base:"lend",past:"lent",participle:"lent",german:"leihen"},
+  {base:"let",past:"let",participle:"let",german:"lassen"},
+  {base:"lie",past:"lay",participle:"lain",german:"liegen"},
+  {base:"lose",past:"lost",participle:"lost",german:"verlieren"},
+  {base:"make",past:"made",participle:"made",german:"machen"},
+  {base:"mean",past:"meant",participle:"meant",german:"bedeuten/meinen"},
+  {base:"meet",past:"met",participle:"met",german:"treffen"},
+  {base:"pay",past:"paid",participle:"paid",german:"bezahlen"},
+  {base:"put",past:"put",participle:"put",german:"legen/stellen"},
+  {base:"read",past:"read",participle:"read",german:"lesen"},
+  {base:"ride",past:"rode",participle:"ridden",german:"reiten/fahren"},
+  {base:"ring",past:"rang",participle:"rung",german:"klingeln"},
+  {base:"rise",past:"rose",participle:"risen",german:"steigen"},
+  {base:"run",past:"ran",participle:"run",german:"laufen"},
+  {base:"say",past:"said",participle:"said",german:"sagen"},
+  {base:"see",past:"saw",participle:"seen",german:"sehen"},
+  {base:"sell",past:"sold",participle:"sold",german:"verkaufen"},
+  {base:"send",past:"sent",participle:"sent",german:"schicken"},
+  {base:"show",past:"showed",participle:"shown",german:"zeigen"},
+  {base:"sing",past:"sang",participle:"sung",german:"singen"},
+  {base:"sink",past:"sank",participle:"sunk",german:"sinken"},
+  {base:"sit",past:"sat",participle:"sat",german:"sitzen"},
+  {base:"sleep",past:"slept",participle:"slept",german:"schlafen"},
+  {base:"speak",past:"spoke",participle:"spoken",german:"sprechen"},
+  {base:"spend",past:"spent",participle:"spent",german:"verbringen/ausgeben"},
+  {base:"stand",past:"stood",participle:"stood",german:"stehen"},
+  {base:"steal",past:"stole",participle:"stolen",german:"stehlen"},
+  {base:"swim",past:"swam",participle:"swum",german:"schwimmen"},
+  {base:"take",past:"took",participle:"taken",german:"nehmen"},
+  {base:"teach",past:"taught",participle:"taught",german:"lehren"},
+  {base:"tell",past:"told",participle:"told",german:"erzählen/sagen"},
+  {base:"think",past:"thought",participle:"thought",german:"denken"},
+  {base:"throw",past:"threw",participle:"thrown",german:"werfen"},
+  {base:"understand",past:"understood",participle:"understood",german:"verstehen"},
+  {base:"wake",past:"woke",participle:"woken",german:"aufwachen"},
+  {base:"wear",past:"wore",participle:"worn",german:"tragen"},
+  {base:"win",past:"won",participle:"won",german:"gewinnen"},
+  {base:"write",past:"wrote",participle:"written",german:"schreiben"},
+];
+
+const { useState, useEffect } = React;
+function shuffle(arr) { return [...arr].sort(() => Math.random() - 0.5); }
+const MODES = { TABLE:"table", FLASHCARD:"flashcard", QUIZ:"quiz" };
+
+function App() {
+  const [mode, setMode] = useState(MODES.TABLE);
+  const [search, setSearch] = useState("");
+  const [flashIndex, setFlashIndex] = useState(0);
+  const [flipped, setFlipped] = useState(false);
+  const [shuffled, setShuffled] = useState(() => shuffle(verbs));
+  const [quizVerbs, setQuizVerbs] = useState([]);
+  const [quizIndex, setQuizIndex] = useState(0);
+  const [quizField, setQuizField] = useState("past");
+  const [quizInput, setQuizInput] = useState("");
+  const [quizResult, setQuizResult] = useState(null);
+  const [quizScore, setQuizScore] = useState({correct:0,total:0});
+  const [quizDone, setQuizDone] = useState(false);
+
+  useEffect(() => { startQuiz(); }, []);
+
+  function startQuiz() {
+    const sv = shuffle(verbs).slice(0,10);
+    setQuizVerbs(sv); setQuizIndex(0); setQuizInput("");
+    setQuizResult(null); setQuizScore({correct:0,total:0}); setQuizDone(false);
+    setQuizField(["past","participle","base"][Math.floor(Math.random()*3)]);
+  }
+
+  function nextFlash() { setFlashIndex(i=>(i+1)%shuffled.length); setFlipped(false); }
+  function prevFlash() { setFlashIndex(i=>(i-1+shuffled.length)%shuffled.length); setFlipped(false); }
+
+  function checkQuiz() {
+    const verb = quizVerbs[quizIndex];
+    const correct = verb[quizField].toLowerCase().replace(/\s/g,"");
+    const answer = quizInput.toLowerCase().replace(/\s/g,"");
+    const isCorrect = correct===answer || correct.split("/").includes(answer);
+    setQuizScore(s=>({correct:s.correct+(isCorrect?1:0),total:s.total+1}));
+    setQuizResult(isCorrect?"correct":"wrong");
+  }
+
+  function nextQuiz() {
+    if (quizIndex+1>=quizVerbs.length) { setQuizDone(true); }
+    else {
+      setQuizIndex(i=>i+1); setQuizInput(""); setQuizResult(null);
+      setQuizField(["past","participle","base"][Math.floor(Math.random()*3)]);
+    }
+  }
+
+  const filtered = verbs.filter(v =>
+    v.base.includes(search.toLowerCase()) || v.past.includes(search.toLowerCase()) ||
+    v.participle.includes(search.toLowerCase()) || v.german.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const fieldLabel = {past:"Simple Past",participle:"Past Participle",base:"Grundform"};
+  const navBtn = {padding:"10px 22px",borderRadius:50,border:"none",cursor:"pointer",fontWeight:700,fontSize:14,background:"linear-gradient(135deg,#e94560,#c23152)",color:"#fff",boxShadow:"0 4px 15px rgba(233,69,96,0.3)"};
+
+  return (
+    <div style={{minHeight:"100vh",background:"linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%)",color:"#eee"}}>
+      <div style={{textAlign:"center",padding:"32px 16px 16px"}}>
+        <h1 style={{fontSize:28,fontWeight:800,margin:0,color:"#fff"}}>🇬🇧 Irregular Verbs Trainer</h1>
+        <p style={{color:"#a0b4cc",marginTop:6,fontSize:14}}>Unregelmäßige englische Verben lernen</p>
+      </div>
+
+      <div style={{display:"flex",justifyContent:"center",gap:8,marginBottom:24,padding:"0 16px",flexWrap:"wrap"}}>
+        {[{key:MODES.TABLE,label:"📋 Tabelle"},{key:MODES.FLASHCARD,label:"🃏 Karteikarten"},{key:MODES.QUIZ,label:"🎯 Quiz"}].map(({key,label})=>(
+          <button key={key} onClick={()=>setMode(key)} style={{padding:"10px 20px",borderRadius:50,border:"none",cursor:"pointer",fontWeight:700,fontSize:14,background:mode===key?"linear-gradient(135deg,#e94560,#c23152)":"rgba(255,255,255,0.08)",color:mode===key?"#fff":"#a0b4cc",boxShadow:mode===key?"0 4px 15px rgba(233,69,96,0.4)":"none"}}>{label}</button>
+        ))}
+      </div>
+
+      <div style={{maxWidth:900,margin:"0 auto",padding:"0 16px 40px"}}>
+
+        {mode===MODES.TABLE && (
+          <div>
+            <input placeholder="🔍 Verb suchen (Englisch oder Deutsch)..." value={search} onChange={e=>setSearch(e.target.value)}
+              style={{width:"100%",padding:"12px 16px",borderRadius:12,border:"1px solid rgba(255,255,255,0.1)",background:"rgba(255,255,255,0.07)",color:"#fff",fontSize:15,marginBottom:16,outline:"none"}} />
+            <div style={{background:"rgba(255,255,255,0.05)",borderRadius:16,overflow:"hidden",border:"1px solid rgba(255,255,255,0.08)"}}>
+              <table style={{width:"100%",borderCollapse:"collapse",fontSize:14}}>
+                <thead><tr style={{background:"rgba(233,69,96,0.3)"}}>
+                  {["Grundform","Simple Past","Past Participle","Bedeutung"].map(h=>(
+                    <th key={h} style={{padding:"14px 16px",textAlign:"left",color:"#ffd",fontWeight:700}}>{h}</th>
+                  ))}
+                </tr></thead>
+                <tbody>{filtered.map((v,i)=>(
+                  <tr key={v.base} style={{background:i%2===0?"transparent":"rgba(255,255,255,0.03)",borderBottom:"1px solid rgba(255,255,255,0.05)"}}>
+                    <td style={{padding:"11px 16px",fontWeight:700,color:"#7dd3fc"}}>{v.base}</td>
+                    <td style={{padding:"11px 16px",color:"#86efac"}}>{v.past}</td>
+                    <td style={{padding:"11px 16px",color:"#fca5a5"}}>{v.participle}</td>
+                    <td style={{padding:"11px 16px",color:"#d1d5db"}}>{v.german}</td>
+                  </tr>
+                ))}</tbody>
+              </table>
+              {filtered.length===0 && <div style={{textAlign:"center",padding:32,color:"#6b7280"}}>Kein Verb gefunden.</div>}
+            </div>
+            <p style={{textAlign:"center",color:"#6b7280",fontSize:13,marginTop:10}}>{filtered.length} von {verbs.length} Verben</p>
+          </div>
+        )}
+
+        {mode===MODES.FLASHCARD && shuffled.length>0 && (
+          <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:20}}>
+            <p style={{color:"#a0b4cc",margin:0}}>Karte {flashIndex+1} von {shuffled.length}</p>
+            <div onClick={()=>setFlipped(!flipped)} style={{width:"100%",maxWidth:460,minHeight:220,background:flipped?"linear-gradient(135deg,#1a472a,#2d6a4f)":"linear-gradient(135deg,#1e3a5f,#0f3460)",borderRadius:24,cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:12,border:`2px solid ${flipped?"#86efac":"#7dd3fc"}`,boxShadow:`0 8px 32px ${flipped?"rgba(134,239,172,0.2)":"rgba(125,211,252,0.2)"}`,padding:32,textAlign:"center"}}>
+              {!flipped ? (
+                <>
+                  <span style={{fontSize:13,color:"#a0b4cc",textTransform:"uppercase",letterSpacing:2}}>Grundform</span>
+                  <span style={{fontSize:44,fontWeight:900,color:"#7dd3fc"}}>{shuffled[flashIndex].base}</span>
+                  <span style={{fontSize:16,color:"#94a3b8"}}>{shuffled[flashIndex].german}</span>
+                  <span style={{fontSize:12,color:"#4b5563",marginTop:8}}>Tippen zum Umdrehen 👆</span>
+                </>
+              ) : (
+                <div style={{display:"flex",gap:32,flexWrap:"wrap",justifyContent:"center"}}>
+                  <div style={{textAlign:"center"}}>
+                    <div style={{fontSize:11,color:"#86efac",textTransform:"uppercase",letterSpacing:1,marginBottom:4}}>Simple Past</div>
+                    <div style={{fontSize:26,fontWeight:800,color:"#86efac"}}>{shuffled[flashIndex].past}</div>
+                  </div>
+                  <div style={{textAlign:"center"}}>
+                    <div style={{fontSize:11,color:"#fca5a5",textTransform:"uppercase",letterSpacing:1,marginBottom:4}}>Past Participle</div>
+                    <div style={{fontSize:26,fontWeight:800,color:"#fca5a5"}}>{shuffled[flashIndex].participle}</div>
+                  </div>
+                </div>
+              )}
+            </div>
+            <div style={{display:"flex",gap:12}}>
+              <button onClick={prevFlash} style={navBtn}>← Zurück</button>
+              <button onClick={()=>{setShuffled(shuffle(verbs));setFlashIndex(0);setFlipped(false);}} style={{...navBtn,background:"rgba(255,255,255,0.12)"}}>🔀 Mischen</button>
+              <button onClick={nextFlash} style={navBtn}>Weiter →</button>
+            </div>
+          </div>
+        )}
+
+        {mode===MODES.QUIZ && (
+          <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:20}}>
+            {quizDone ? (
+              <div style={{textAlign:"center",background:"rgba(255,255,255,0.05)",borderRadius:24,padding:40,maxWidth:420,width:"100%"}}>
+                <div style={{fontSize:60}}>{quizScore.correct>=8?"🏆":quizScore.correct>=5?"👍":"💪"}</div>
+                <h2 style={{color:"#fff",marginTop:12}}>Quiz beendet!</h2>
+                <p style={{color:"#a0b4cc",fontSize:18}}>Ergebnis: <strong style={{color:"#86efac"}}>{quizScore.correct}</strong> / {quizScore.total} richtig</p>
+                <p style={{color:"#6b7280",fontSize:14}}>{quizScore.correct===10?"Perfekt! 🎉":quizScore.correct>=7?"Sehr gut! Weiter so!":quizScore.correct>=4?"Gut gemacht!":"Nicht aufgeben!"}</p>
+                <button onClick={startQuiz} style={{...navBtn,marginTop:16,padding:"12px 32px",fontSize:16}}>🔄 Nochmal spielen</button>
+              </div>
+            ) : quizVerbs.length>0 && (
+              <>
+                <div style={{display:"flex",gap:16,alignItems:"center"}}>
+                  <span style={{color:"#a0b4cc",fontSize:14}}>Frage {quizIndex+1} / {quizVerbs.length}</span>
+                  <span style={{color:"#86efac",fontSize:14}}>✅ {quizScore.correct} richtig</span>
+                </div>
+                <div style={{width:"100%",maxWidth:460,background:"rgba(255,255,255,0.05)",borderRadius:24,padding:"32px 28px",border:"1px solid rgba(255,255,255,0.1)"}}>
+                  <p style={{color:"#a0b4cc",fontSize:13,textTransform:"uppercase",letterSpacing:1,margin:"0 0 8px"}}>
+                    Wie lautet der <strong style={{color:"#fbbf24"}}>{fieldLabel[quizField]}</strong> von:
+                  </p>
+                  <p style={{fontSize:36,fontWeight:900,color:"#7dd3fc",margin:"0 0 6px"}}>
+                    {quizField==="base"?quizVerbs[quizIndex].past:quizVerbs[quizIndex].base}
+                  </p>
+                  <p style={{color:"#6b7280",fontSize:13,margin:"0 0 24px"}}>Bedeutung: {quizVerbs[quizIndex].german}</p>
+                  <input key={quizIndex} placeholder={`${fieldLabel[quizField]} eingeben...`} value={quizInput}
+                    onChange={e=>{if(!quizResult)setQuizInput(e.target.value);}}
+                    onKeyDown={e=>{if(e.key==="Enter"){if(!quizResult)checkQuiz();else nextQuiz();}}}
+                    autoFocus
+                    style={{width:"100%",padding:"12px 16px",borderRadius:12,border:`2px solid ${quizResult==="correct"?"#86efac":quizResult==="wrong"?"#f87171":"rgba(255,255,255,0.15)"}`,background:"rgba(255,255,255,0.06)",color:"#fff",fontSize:16,outline:"none",marginBottom:12}} />
+                  {quizResult && (
+                    <div style={{padding:"12px 16px",borderRadius:12,marginBottom:12,background:quizResult==="correct"?"rgba(134,239,172,0.15)":"rgba(248,113,113,0.15)",border:`1px solid ${quizResult==="correct"?"#86efac":"#f87171"}`,color:quizResult==="correct"?"#86efac":"#f87171",fontSize:14}}>
+                      {quizResult==="correct"?"✅ Richtig!":<span>❌ Falsch! Richtig: <strong>{quizVerbs[quizIndex][quizField]}</strong></span>}
+                    </div>
+                  )}
+                  {!quizResult
+                    ?<button onClick={checkQuiz} style={{...navBtn,width:"100%",padding:"13px",fontSize:15}}>Überprüfen ✓</button>
+                    :<button onClick={nextQuiz} style={{...navBtn,width:"100%",padding:"13px",fontSize:15}}>{quizIndex+1>=quizVerbs.length?"Ergebnis anzeigen 🏁":"Nächste Frage →"}</button>
+                  }
+                </div>
+                <div style={{display:"flex",gap:4}}>
+                  {quizVerbs.map((_,i)=>(
+                    <div key={i} style={{width:8,height:8,borderRadius:"50%",background:i<quizIndex?"#86efac":i===quizIndex?"#fbbf24":"rgba(255,255,255,0.2)"}} />
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
